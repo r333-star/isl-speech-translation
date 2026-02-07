@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISL AI Communicator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60efff 0%, #0061ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #videoContainer {
+            position: relative;
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            min-height: 480px;
+        }
+        
+        #videoFeed {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .gesture-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gesture-text {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .gesture-confidence {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+        
+        .status-active {
+            background: #10b981;
+        }
+        
+        .status-detecting {
+            background: #f59e0b;
+        }
+        
+        .status-inactive {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        #conversationText {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        
+        .gesture-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .gesture-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .gesture-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .gesture-desc {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        #statusText {
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #60efff;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤝 ISL AI Communicator</h1>
+            <p class="subtitle">Real-Time Indian Sign Language Recognition</p>
+        </header>
+        
+        <div class="main-grid">
+            <!-- Left Column: Video Feed -->
+            <div>
+                <div class="card">
+                    <div class="card-title">📹 Camera Feed</div>
+                    
+                    <div id="videoContainer">
+                        <img id="videoFeed" src="" alt="Camera feed will appear here" style="display: none;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 480px; color: rgba(255,255,255,0.5);">
+                            <p>Click "Start Detection" to begin</p>
+                        </div>
+                    </div>
+                    
+                    <div id="statusText">
+                        <span class="status-badge status-inactive">⚪ Camera Inactive</span>
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="btn-primary" id="startBtn" onclick="startDetection()">
+                            🎥 Start Detection
+                        </button>
+                        <button class="btn-danger" id="stopBtn" onclick="stopDetection()" style="display: none;">
+                            ⏹️ Stop Detection
+                        </button>
+                    </div>
+                    
+                    <div class="stats" id="stats" style="display: none;">
+                        <div class="stat-box">
+                            <div class="stat-number" id="handCount">0</div>
+                            <div class="stat-label">Hands</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="gestureCount">0</div>
+                            <div class="stat-label">Gestures</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Gesture Info -->
+            <div>
+                <!-- Current Gesture -->
+                <div class="card">
+                    <div class="card-title">🎯 Current Gesture</div>
+                    <div class="gesture-display">
+                        <div class="gesture-text" id="currentGesture">...</div>
+                        <div class="gesture-confidence" id="confidence">Waiting...</div>
+                    </div>
+                </div>
+                
+                <!-- Conversation -->
+                <div class="card">
+                    <div class="card-title">💬 Conversation</div>
+                    <textarea id="conversationText" readonly placeholder="Detected gestures will appear here..."></textarea>
+                    
+                    <div class="controls" style="margin-top: 10px;">
+                        <button class="btn-secondary" onclick="speakConversation()">🔊 Speak</button>
+                        <button class="btn-secondary" onclick="clearConversation()">🗑️ Clear</button>
+                    </div>
+                </div>
+                
+                <!-- Gesture Guide -->
+                <div class="card">
+                    <div class="card-title">📚 Gesture Guide</div>
+                    <div id="gestureList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let isDetecting = false;
+        let detectionInterval = null;
+        let conversation = [];
+        let lastGesture = null;
+        
+        // Load gesture list
+        async function loadGestures() {
+            try {
+                const response = await fetch(`${API_BASE}/gestures`);
+                const data = await response.json();
+                
+                const gestureList = document.getElementById('gestureList');
+                gestureList.innerHTML = data.gestures.map(g => `
+                    <div class="gesture-item">
+                        <div class="gesture-name">${g.emoji} ${g.name}</div>
+                        <div class="gesture-desc">${g.description}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load gestures:', error);
+            }
+        }
+        
+        // Start detection
+        async function startDetection() {
+            try {
+                // Start camera
+                const response = await fetch(`${API_BASE}/start-camera`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    isDetecting = true;
+                    
+                    // Update UI
+                    document.getElementById('startBtn').style.display = 'none';
+                    document.getElementById('stopBtn').style.display = 'block';
+                    document.getElementById('stats').style.display = 'grid';
+                    
+                    // Start video feed
+                    const videoFeed = document.getElementById('videoFeed');
+                    videoFeed.src = `${API_BASE}/video-feed`;
+                    videoFeed.style.display = 'block';
+                    videoFeed.parentElement.querySelector('div').style.display = 'none';
+                    
+                    // Start processing
+                    detectionInterval = setInterval(processFrame, 100);
+                } else {
+                    alert('Failed to start camera: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error starting detection:', error);
+                alert('Failed to connect to backend. Make sure the server is running.');
+            }
+        }
+        
+        // Stop detection
+        async function stopDetection() {
+            try {
+                await fetch(`${API_BASE}/stop-camera`, {
+                    method: 'POST'
+                });
+                
+                isDetecting = false;
+                clearInterval(detectionInterval);
+                
+                // Update UI
+                document.getElementById('startBtn').style.display = 'block';
+                document.getElementById('stopBtn').style.display = 'none';
+                document.getElementById('stats').style.display = 'none';
+                document.getElementById('videoFeed').style.display = 'none';
+                document.getElementById('videoFeed').parentElement.querySelector('div').style.display = 'flex';
+                
+                updateStatus('inactive', '⚪ Camera Inactive');
+            } catch (error) {
+                console.error('Error stopping detection:', error);
+            }
+        }
+        
+        // Process frame
+        async function processFrame() {
+            if (!isDetecting) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/process-frame`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const { gesture, confidence, confirmed, hand_count } = data.data;
+                    
+                    // Update hand count
+                    document.getElementById('handCount').textContent = hand_count;
+                    
+                    // Update gesture display
+                    if (gesture) {
+                        document.getElementById('currentGesture').textContent = gesture;
+                        document.getElementById('confidence').textContent = 
+                            `${(confidence * 100).toFixed(0)}% Confidence`;
+                        
+                        if (confirmed) {
+                            updateStatus('active', `✅ CONFIRMED: ${gesture}`);
+                            
+                            // Add to conversation
+                            if (gesture !== lastGesture) {
+                                addToConversation(gesture);
+                                lastGesture = gesture;
+                            }
+                        } else {
+                            updateStatus('detecting', `⏳ Detecting: ${gesture}...`);
+                        }
+                    } else {
+                        document.getElementById('currentGesture').textContent = '...';
+                        document.getElementById('confidence').textContent = 'Waiting...';
+                        updateStatus('inactive', '👋 Show your hand gesture');
+                        lastGesture = null;
+                    }
+                }
+            } catch (error) {
+                console.error('Error processing frame:', error);
+            }
+        }
+        
+        // Update status
+        function updateStatus(type, message) {
+            const statusText = document.getElementById('statusText');
+            const classes = {
+                'active': 'status-active',
+                'detecting': 'status-detecting',
+                'inactive': 'status-inactive'
+            };
+            
+            statusText.innerHTML = `<span class="status-badge ${classes[type]}">${message}</span>`;
+        }
+        
+        // Add to conversation
+        function addToConversation(gesture) {
+            conversation.push(gesture);
+            document.getElementById('conversationText').value = conversation.join(' → ');
+            document.getElementById('gestureCount').textContent = conversation.length;
+        }
+        
+        // Clear conversation
+        async function clearConversation() {
+            conversation = [];
+            document.getElementById('conversationText').value = '';
+            document.getElementById('gestureCount').textContent = '0';
+            
+            try {
+                await fetch(`${API_BASE}/conversation`, {
+                    method: 'DELETE'
+                });
+            } catch (error) {
+                console.error('Error clearing conversation:', error);
+            }
+        }
+        
+        // Speak conversation
+        function speakConversation() {
+            const text = conversation.join(', ');
+            
+            if (text) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('Nothing to speak!');
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGestures();
+        });
+    </script>
+</body>
+</html>
