@@ -1,0 +1,15 @@
+isl-project
+isl-project/.gitignore
+isl-project/LICENSE
+isl-project/PROJECT_STRUCTURE.txt
+isl-project/README.md
+isl-project/backend
+isl-project/backend/app.py
+isl-project/backend/requirements.txt
+isl-project/docs
+isl-project/docs/SETUP.md
+isl-project/frontend
+isl-project/frontend/index.html
+isl-project/start.bat
+isl-project/start.sh
+isl-project/{frontend,backend,docs}
