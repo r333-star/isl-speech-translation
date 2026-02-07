@@ -31,7 +31,7 @@ The system reduces isolation for people with hearing and speech impairments by e
 
 ## Tech Stack
 - Python
-- MediaPipe
+- yolo
 - OpenCV
 - Deep Learning
 - Speech-to-Text (STT)
